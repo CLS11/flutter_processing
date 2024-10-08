@@ -1,16 +1,17 @@
 // ignore_for_file: deprecated_member_use
 
+
 import 'package:flutter/material.dart';
 import 'package:flutter_processing/src/_core.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:golden_toolkit/golden_toolkit.dart';
 
+import 'test_infra.dart';
+
 void main() {
   group('core', () {
     testGoldens('User can paint background in setup().', (tester) async {
-      tester.binding.window
-        ..physicalSizeTestValue = Size(100, 100)
-        ..devicePixelRatioTestValue = 1.0;
+      configureWindowSpecTest(tester);
 
       await tester.pumpWidget(
         Processing(
@@ -23,9 +24,7 @@ void main() {
   });
 
   testGoldens('User can paint background in draw().', (tester) async {
-    tester.binding.window
-      ..physicalSizeTestValue = Size(100, 100)
-      ..devicePixelRatioTestValue = 1.0;
+    configureWindowSpecTest(tester);
 
     await tester.pumpWidget(
       Processing(
@@ -37,9 +36,7 @@ void main() {
   });
 
   testGoldens('User can paint orange background.', (tester) async {
-    tester.binding.window
-      ..physicalSizeTestValue = Size(100, 100)
-      ..devicePixelRatioTestValue = 1.0;
+    configureWindowSpecTest(tester);
 
     await tester.pumpWidget(
       Processing(
@@ -52,13 +49,17 @@ void main() {
 
   testGoldens('background() in draw() replaces background in setup()',
       (tester) async {
-    tester.binding.window
-      ..physicalSizeTestValue = Size(100, 100)
-      ..devicePixelRatioTestValue = 1.0;
-
+    configureWindowSpecTest(tester);
     await tester.pumpWidget(
       Processing(
-        sketch: PaintBackgroundInSetupAndDrawSketch(),
+        sketch: Sketch.simple(
+          setup: (s) {
+            s.background(color: const Color(0xFFFF0000));
+          },
+          draw: (s) {
+            s.background(color: const Color(0xFF404040));
+          },
+        ),
       ),
     );
 
@@ -87,7 +88,7 @@ class PaintOrangeBackgroundSketch extends Sketch {
   }
 }
 
-class PaintBackgroundInSetupAndDrawSketch extends Sketch {
+/*class PaintBackgroundInSetupAndDrawSketch extends Sketch {
   @override
   void setup() {
     background(color: const Color(0xFFFF0000));
@@ -97,4 +98,4 @@ class PaintBackgroundInSetupAndDrawSketch extends Sketch {
   void draw() {
     background(color: const Color(0xFF404040));
   }
-}
+}*/
