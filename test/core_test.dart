@@ -1,6 +1,5 @@
 // ignore_for_file: deprecated_member_use
 
-
 import 'package:flutter/material.dart';
 import 'package:flutter_processing/src/_core.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -10,12 +9,28 @@ import 'test_infra.dart';
 
 void main() {
   group('core', () {
+    testGoldens('setup() paints light grey background by default.',
+        (tester) async {
+      configureWindowSpecTest(tester);
+
+      await tester.pumpWidget(
+        Processing(
+          sketch: Sketch.simple(),
+        ),
+      );
+
+      await screenMatchesGolden(tester, 'core_default_background');
+    });
     testGoldens('User can paint background in setup().', (tester) async {
       configureWindowSpecTest(tester);
 
       await tester.pumpWidget(
         Processing(
-          sketch: PaintBackgroundInSetupSketch(),
+          sketch: Sketch.simple(
+            setup: (s) {
+              s.background(color: const Color(0xFF404040));
+            },
+          ),
         ),
       );
 
@@ -28,7 +43,11 @@ void main() {
 
     await tester.pumpWidget(
       Processing(
-        sketch: PaintBackgroundInDrawSketch(),
+        sketch: Sketch.simple(
+          draw: (s) {
+            s.background(color: const Color(0xFF404040));
+          },
+        ),
       ),
     );
 
@@ -40,7 +59,11 @@ void main() {
 
     await tester.pumpWidget(
       Processing(
-        sketch: PaintOrangeBackgroundSketch(),
+        sketch: Sketch.simple(
+          draw: (s) {
+            s.background(color: const Color(0xFFFFCC00));
+          },
+        ),
       ),
     );
 
@@ -67,7 +90,7 @@ void main() {
   });
 }
 
-class PaintBackgroundInSetupSketch extends Sketch {
+/*class PaintBackgroundInSetupSketch extends Sketch {
   @override
   void setup() {
     background(color: const Color(0xFF404040));
@@ -88,7 +111,7 @@ class PaintOrangeBackgroundSketch extends Sketch {
   }
 }
 
-/*class PaintBackgroundInSetupAndDrawSketch extends Sketch {
+class PaintBackgroundInSetupAndDrawSketch extends Sketch {
   @override
   void setup() {
     background(color: const Color(0xFFFF0000));
