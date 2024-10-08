@@ -16,17 +16,30 @@ class Processing extends StatelessWidget {
   }
 }
 
-abstract class Sketch {
-  void setup() {}
+class Sketch {
+  Sketch();
 
-  void draw() {}
+  Sketch.simple({
+    required void Function(Sketch) setup,
+    required void Function(Sketch) draw,
+  })  : _setup = setup,
+        _draw = draw;
+
+  late void Function(Sketch) _setup;
+  late void Function(Sketch) _draw;
+
+  void setup() {
+    _setup(this); // Call the setup method with 'this' as the parameter
+  }
+
+  void draw() {
+    _draw(this);
+  }
 
   late Canvas canvas;
   late Size size;
 
-  void background({
-    required Color color,
-  }) {
+  void background({required Color color}) {
     assert(canvas != null);
     assert(size != null);
 
@@ -39,6 +52,7 @@ class _SketchPainter extends CustomPainter {
   _SketchPainter({required this.sketch}) : assert(sketch != null);
 
   final Sketch sketch;
+
   @override
   void paint(Canvas canvas, Size size) {
     sketch
@@ -50,6 +64,6 @@ class _SketchPainter extends CustomPainter {
 
   @override
   bool shouldRepaint(covariant CustomPainter oldDelegate) {
-    throw UnimplementedError();
+    return false; // Return false to indicate that it does not need to repaint
   }
 }
