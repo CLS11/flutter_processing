@@ -20,20 +20,25 @@ class Sketch {
   Sketch();
 
   Sketch.simple({
-    required void Function(Sketch) setup,
-    required void Function(Sketch) draw,
+   void Function(Sketch)? setup,
+    void Function(Sketch)? draw,
   })  : _setup = setup,
         _draw = draw;
 
-  late void Function(Sketch) _setup;
-  late void Function(Sketch) _draw;
+  late void Function(Sketch)? _setup = (s) {};
+  late void Function(Sketch)? _draw = (s) {};
+  void _doSetup() {
+    //Default background color
+    background(color: const Color(0xFFC5C5C5));
+    setup();
+  }
 
   void setup() {
-    _setup(this); // Call the setup method with 'this' as the parameter
+    _setup?.call(this);
   }
 
   void draw() {
-    _draw(this);
+    _draw?.call(this);
   }
 
   late Canvas canvas;
@@ -58,7 +63,7 @@ class _SketchPainter extends CustomPainter {
     sketch
       ..canvas = canvas
       ..size = size
-      ..setup()
+      .._doSetup()
       ..draw();
   }
 
