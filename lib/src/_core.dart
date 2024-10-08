@@ -17,9 +17,9 @@ class Processing extends StatelessWidget {
 }
 
 abstract class Sketch {
-  void setup(){}
+  void setup() {}
 
-  void draw(){}
+  void draw() {}
 
   late Canvas canvas;
   late Size size;
@@ -50,7 +50,6 @@ class _SketchPainter extends CustomPainter {
 
   @override
   bool shouldRepaint(covariant CustomPainter oldDelegate) {
-    // TODO: implement shouldRepaint
     throw UnimplementedError();
   }
 }
