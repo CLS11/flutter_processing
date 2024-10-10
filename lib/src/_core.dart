@@ -57,19 +57,42 @@ class Sketch {
   late Paint _fillPaint;
   late Paint _strokePaint;
 
+  //**************COLOR/SETTING **************//
+
   void background({required Color color}) {
     final paint = Paint()..color = color;
     canvas.drawRect(Offset.zero & size, paint);
   }
 
+  void fill({
+    required Color color,
+  }) {
+    _fillPaint.color = color;
+  }
+
+  void noFill() {
+    _fillPaint.color = const Color(0x00000000);
+  }
+
+  void stroke({
+    required Color color,
+  }) {
+    _strokePaint.color = color;
+  }
+
+  void noStroke() {
+    _strokePaint.color = const Color(0x00000000);
+  }
+
+  //***************SHAPE/2D PRIMITIVE************//
   void circle({
     required Offset center,
     required double diameter,
   }) {
     canvas
-    ..drawCircle(center, diameter/2, _fillPaint)
-    ..drawCircle(center, diameter/2, _strokePaint);
-}
+      ..drawCircle(center, diameter / 2, _fillPaint)
+      ..drawCircle(center, diameter / 2, _strokePaint);
+  }
 }
 
 class _SketchPainter extends CustomPainter {
