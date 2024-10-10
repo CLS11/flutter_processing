@@ -20,7 +20,7 @@ class Sketch {
   Sketch();
 
   Sketch.simple({
-   void Function(Sketch)? setup,
+    void Function(Sketch)? setup,
     void Function(Sketch)? draw,
   })  : _setup = setup,
         _draw = draw;
@@ -28,8 +28,19 @@ class Sketch {
   late void Function(Sketch)? _setup = (s) {};
   late void Function(Sketch)? _draw = (s) {};
   void _doSetup() {
+    assert(canvas != null);
+    assert(size != null);
     //Default background color
     background(color: const Color(0xFFC5C5C5));
+
+    _fillPaint = Paint()
+      ..color = const Color(0xFFFFFFFF)
+      ..style = PaintingStyle.fill;
+
+    _strokePaint = Paint()
+      ..color = const Color(0xFF000000)
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 1;
     setup();
   }
 
@@ -43,14 +54,22 @@ class Sketch {
 
   late Canvas canvas;
   late Size size;
+  late Paint _fillPaint;
+  late Paint _strokePaint;
 
   void background({required Color color}) {
-    assert(canvas != null);
-    assert(size != null);
-
     final paint = Paint()..color = color;
     canvas.drawRect(Offset.zero & size, paint);
   }
+
+  void circle({
+    required Offset center,
+    required double diameter,
+  }) {
+    canvas
+    ..drawCircle(center, diameter/2, _fillPaint)
+    ..drawCircle(center, diameter/2, _strokePaint);
+}
 }
 
 class _SketchPainter extends CustomPainter {
