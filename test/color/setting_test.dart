@@ -16,9 +16,8 @@ void main() {
             sketch: Sketch.simple(
               draw: (s) {
                 s.fill(color: const Color(0xFF969696));
-                s.circle(
-                  center: const Offset(56, 46),
-                  diameter: 55,
+                s.rect(
+                  rect: Rect.fromLTWH(30, 20, 55, 55),
                 );
               },
             ),
@@ -36,9 +35,8 @@ void main() {
             sketch: Sketch.simple(
               draw: (s) {
                 s.fill(color: const Color(0xFFCC6600));
-                s.circle(
-                  center: const Offset(56, 46),
-                  diameter: 55,
+                s.rect(
+                  rect: Rect.fromLTWH(30, 20, 55, 55),
                 );
               },
             ),
@@ -56,9 +54,8 @@ void main() {
             sketch: Sketch.simple(
               draw: (s) {
                 s.stroke(color: const Color(0xFFAAAAAA));
-                s.circle(
-                  center: const Offset(56, 46),
-                  diameter: 55,
+                s.rect(
+                  rect: Rect.fromLTWH(30, 20, 55, 55),
                 );
               },
             ),
@@ -76,9 +73,8 @@ void main() {
             sketch: Sketch.simple(
               draw: (s) {
                 s.stroke(color: const Color(0xFFCC6600));
-                s.circle(
-                  center: const Offset(56, 46),
-                  diameter: 55,
+                s.rect(
+                  rect: Rect.fromLTWH(30, 20, 55, 55),
                 );
               },
             ),
@@ -86,26 +82,6 @@ void main() {
         );
 
         await screenMatchesGolden(tester, 'color_setting_stroke-example-2');
-      });
-
-      testGoldens('fill(): example 1', (tester) async {
-        configureWindowSpecTest(tester);
-
-        await tester.pumpWidget(
-          Processing(
-            sketch: Sketch.simple(
-              draw: (s) {
-                s.fill(color: const Color(0xFF969696));
-                s.circle(
-                  center: const Offset(56, 46),
-                  diameter: 55,
-                );
-              },
-            ),
-          ),
-        );
-
-        await screenMatchesGolden(tester, 'color_setting_fill-example-1');
       });
 
       testGoldens('nostroke(): example 1', (tester) async {
@@ -116,9 +92,8 @@ void main() {
             sketch: Sketch.simple(
               draw: (s) {
                 s.noStroke();
-                s.circle(
-                  center: const Offset(56, 46),
-                  diameter: 55,
+                s.rect(
+                  rect: Rect.fromLTWH(30, 20, 55, 55),
                 );
               },
             ),
@@ -166,15 +141,9 @@ void main() {
           Processing(
             sketch: Sketch.simple(
               draw: (s) {
-                s.circle(
-                  center: const Offset(40, 40),
-                  diameter: 55,
-                );
+                s.rect(rect: Rect.fromLTWH(15, 10, 55, 55));
                 s.noFill();
-                s.circle(
-                  center: const Offset(60, 60),
-                  diameter: 55,
-                );
+                s.rect(rect: Rect.fromLTWH(30, 20, 55, 55));
               },
             ),
           ),
