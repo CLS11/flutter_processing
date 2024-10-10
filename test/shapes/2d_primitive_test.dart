@@ -26,6 +26,83 @@ void main() {
         await screenMatchesGolden(
             tester, 'shape_2d_primitive_circle-example-1');
       });
+
+      testGoldens('square(): example 1', (tester) async {
+        configureWindowSpecTest(tester);
+        await tester.pumpWidget(
+          Processing(
+            sketch: Sketch.simple(
+              draw: (s) {
+                s.square(
+                  Square.fromLTE(const Offset(30, 20), 55),
+                );
+              },
+            ),
+          ),
+        );
+
+        await screenMatchesGolden(
+            tester, 'shape_2d_primitive_square-example-1');
+      });
+
+      testGoldens('rect(): example 1', (tester) async {
+        configureWindowSpecTest(tester);
+        await tester.pumpWidget(
+          Processing(
+            sketch: Sketch.simple(
+              draw: (s) {
+                s.rect(
+                  rect: const Rect.fromLTWH(30, 20, 55, 55),
+                );
+              },
+            ),
+          ),
+        );
+
+        await screenMatchesGolden(tester, 'shape_2d_primitive_rect-example-1');
+      });
+
+      testGoldens('rect(): example 2', (tester) async {
+        configureWindowSpecTest(tester);
+        await tester.pumpWidget(
+          Processing(
+            sketch: Sketch.simple(
+              draw: (s) {
+                s.rect(
+                  rect: const Rect.fromLTWH(30, 20, 55, 55),
+                  borderRadius: BorderRadius.circular(7),
+                );
+              },
+            ),
+          ),
+        );
+
+        await screenMatchesGolden(tester, 'shape_2d_primitive_rect-example-2');
+      });
+
+      testGoldens('rect(): example 3', (tester) async {
+        configureWindowSpecTest(tester);
+        await tester.pumpWidget(
+          Processing(
+            sketch: Sketch.simple(
+              draw: (s) {
+                s.rect(
+                  rect: const Rect.fromLTWH(30, 20, 55, 55),
+                  borderRadius: const BorderRadius.only(
+                    topLeft: Radius.circular(3),
+                    topRight: Radius.circular(6),
+                    bottomRight: Radius.circular(12),
+                    bottomLeft: Radius.circular(18),
+                  ),
+                );
+              },
+            ),
+          ),
+        );
+
+        await screenMatchesGolden(
+            tester, 'shape_2d_primitive_rect-example-3');
+      });
     });
   });
 }
