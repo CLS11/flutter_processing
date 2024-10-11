@@ -142,6 +142,53 @@ void main() {
 
         await screenMatchesGolden(tester, 'shape_2d_primitive_quad-example-1');
       });
+
+      testGoldens('line(): example 1', (tester) async {
+        configureWindowSpecTest(tester);
+        await tester.pumpWidget(
+          Processing(
+            sketch: Sketch.simple(
+              draw: (s) {
+                s.line(
+                  const Offset(30, 20),
+                  const Offset(85, 75),
+                );
+              },
+            ),
+          ),
+        );
+
+        await screenMatchesGolden(tester, 'shape_2d_primitive_line-example-1');
+      });
+
+      testGoldens('line(): example 2', (tester) async {
+        configureWindowSpecTest(tester);
+        await tester.pumpWidget(
+          Processing(
+            sketch: Sketch.simple(
+              draw: (s) {
+                s
+                  ..line(
+                    const Offset(30, 20),
+                    const Offset(85, 75),
+                  )
+                  ..stroke(color: Color.fromARGB(255, 126, 126, 126))
+                  ..line(
+                    const Offset(85, 20),
+                    const Offset(85, 75),
+                  )
+                  ..stroke(color: Color.fromARGB(255, 255, 255, 255))
+                  ..line(
+                    const Offset(85, 75),
+                    const Offset(30, 75),
+                  );
+              },
+            ),
+          ),
+        );
+
+        await screenMatchesGolden(tester, 'shape_2d_primitive_line-example-2');
+      });
     });
   });
 }
