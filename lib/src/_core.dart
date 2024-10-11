@@ -144,6 +144,14 @@ class Sketch {
       ..drawPath(path, _fillPaint)
       ..drawPath(path, _strokePaint);
   }
+
+  void line(Offset pt1, Offset pt2) {
+    final path = Path()
+      ..moveTo(pt1.dx, pt1.dy)
+      ..lineTo(pt2.dx, pt2.dy)
+      ..close();
+    canvas.drawPath(path, _strokePaint);
+  }
 }
 
 class Square {
