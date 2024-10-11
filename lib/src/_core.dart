@@ -132,6 +132,18 @@ class Sketch {
       ..drawPath(path, _fillPaint)
       ..drawPath(path, _strokePaint);
   }
+
+  void quad(Offset pt1, Offset pt2, Offset pt3, Offset pt4) {
+    final path = Path()
+      ..moveTo(pt1.dx, pt1.dy)
+      ..lineTo(pt2.dx, pt2.dy)
+      ..lineTo(pt3.dx, pt3.dy)
+      ..lineTo(pt4.dx, pt4.dy)
+      ..close();
+    canvas
+      ..drawPath(path, _fillPaint)
+      ..drawPath(path, _strokePaint);
+  }
 }
 
 class Square {
