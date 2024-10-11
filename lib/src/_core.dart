@@ -145,12 +145,11 @@ class Sketch {
       ..drawPath(path, _strokePaint);
   }
 
-  void line(Offset pt1, Offset pt2) {
-    final path = Path()
-      ..moveTo(pt1.dx, pt1.dy)
-      ..lineTo(pt2.dx, pt2.dy)
-      ..close();
-    canvas.drawPath(path, _strokePaint);
+  void line(Offset pt1, Offset pt2, [Offset? pt3]) {
+    if (pt3 != null) {
+      throw UnimplementedError('3D line drawing is not yet supported.');
+    }
+    canvas.drawLine(pt1, pt2, _strokePaint);
   }
 }
 
