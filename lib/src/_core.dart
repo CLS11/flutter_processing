@@ -121,6 +121,17 @@ class Sketch {
         ..drawRRect(rrect, _strokePaint);
     }
   }
+
+  void triangle(Offset pt1, Offset pt2, Offset pt3) {
+    final path = Path()
+      ..moveTo(pt1.dx, pt1.dy)
+      ..lineTo(pt2.dx, pt2.dy)
+      ..lineTo(pt3.dx, pt3.dy)
+      ..close();
+    canvas
+      ..drawPath(path, _fillPaint)
+      ..drawPath(path, _strokePaint);
+  }
 }
 
 class Square {
