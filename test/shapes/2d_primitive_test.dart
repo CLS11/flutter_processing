@@ -122,6 +122,26 @@ void main() {
         await screenMatchesGolden(
             tester, 'shape_2d_primitive_triangle-example-1');
       });
+
+      testGoldens('quad(): example 1', (tester) async {
+        configureWindowSpecTest(tester);
+        await tester.pumpWidget(
+          Processing(
+            sketch: Sketch.simple(
+              draw: (s) {
+                s.quad(
+                  const Offset(38, 31),
+                  const Offset(86, 20),
+                  const Offset(69, 63),
+                  const Offset(30, 70),
+                );
+              },
+            ),
+          ),
+        );
+
+        await screenMatchesGolden(tester, 'shape_2d_primitive_quad-example-1');
+      });
     });
   });
 }
