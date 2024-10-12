@@ -84,7 +84,7 @@ class Sketch {
     _strokePaint.color = const Color(0x00000000);
   }
 
-  //***************SHAPE/2D PRIMITIVE************//
+  //***************SHAPE/2D PRIMITIVES**************//
   void circle({
     required Offset center,
     required double diameter,
@@ -150,6 +150,18 @@ class Sketch {
       throw UnimplementedError('3D line drawing is not yet supported.');
     }
     canvas.drawLine(pt1, pt2, _strokePaint);
+  }
+
+  void point({required double x, required double y, double? z}) {
+    if (z != null) {
+      throw UnimplementedError('3d point drawing is not yet supported.');
+    }
+    _strokePaint.style = PaintingStyle.fill;
+    canvas.drawRect(
+      Rect.fromLTWH(x, y, 1, 1),
+      _strokePaint,
+    );
+    _strokePaint.style = PaintingStyle.stroke;
   }
 }
 
