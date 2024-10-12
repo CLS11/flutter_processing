@@ -208,6 +208,91 @@ void main() {
 
         await screenMatchesGolden(tester, 'shape_2d_primitive_point-example-1');
       });
+
+      testGoldens('ellipse(): example 1', (tester) async {
+        configureWindowSpecTest(tester);
+        await tester.pumpWidget(
+          Processing(
+            sketch: Sketch.simple(
+              draw: (s) {
+                s.ellipse(
+                  Ellipse.fromCenter(
+                    center: const Offset(56, 46),
+                    width: 55,
+                    height: 55,
+                  ),
+                );
+              },
+            ),
+          ),
+        );
+
+        await screenMatchesGolden(
+            tester, 'shape_2d_primitive_ellipse-example-1');
+      });
+
+      testGoldens('ellipse(): example 2', (tester) async {
+        configureWindowSpecTest(tester);
+        await tester.pumpWidget(
+          Processing(
+            sketch: Sketch.simple(
+              draw: (s) {
+                s
+                  ..fill(color: Color.fromARGB(255, 255, 255, 255))
+                  ..ellipse(
+                    Ellipse.fromCenterWithRadius(
+                      center: const Offset(56, 46),
+                      radius1: 30,
+                      radius2: 30,
+                    ),
+                  )
+                  ..fill(color: Color.fromARGB(255, 100, 100, 100))
+                  ..ellipse(
+                    Ellipse.fromCenter(
+                      center: const Offset(56, 46),
+                      width: 30,
+                      height: 30,
+                    ),
+                  );
+              },
+            ),
+          ),
+        );
+
+        await screenMatchesGolden(
+            tester, 'shape_2d_primitive_ellipse-example-2');
+      });
+
+      testGoldens('ellipse(): example 3', (tester) async {
+        configureWindowSpecTest(tester);
+        await tester.pumpWidget(
+          Processing(
+            sketch: Sketch.simple(
+              draw: (s) {
+                s
+                  ..fill(color: Color.fromARGB(255, 255, 255, 255))
+                  ..ellipse(
+                    Ellipse.fromLTWH(
+                      topLeft: Offset(25, 25),
+                      width: 50,
+                      height: 50,
+                    ),
+                  )
+                  ..fill(color: Color.fromARGB(255, 100, 100, 100))
+                  ..ellipse(
+                    Ellipse.fromLTRB(
+                      topLeft: Offset(25, 25),
+                      bottomRight: Offset(50, 50),
+                    ),
+                  );
+              },
+            ),
+          ),
+        );
+
+        await screenMatchesGolden(
+            tester, 'shape_2d_primitive_ellipse-example-3');
+      });
     });
   });
 }
