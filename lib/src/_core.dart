@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 
 class Processing extends StatelessWidget {
@@ -99,6 +98,76 @@ class Sketch {
     canvas
       ..drawOval(ellipse.rect, _fillPaint)
       ..drawOval(ellipse.rect, _strokePaint);
+  }
+
+  void arc({
+    required Ellipse ellipse,
+    required double startAngle,
+    required double endAngle,
+    ArcMode mode = ArcMode.openStrokePieFill,
+  }) {
+    switch (mode) {
+      case ArcMode.open:
+        canvas.drawArc(
+          ellipse.rect,
+          startAngle,
+          endAngle - startAngle,
+          false,
+          _fillPaint,
+        );
+        canvas.drawArc(
+          ellipse.rect,
+          startAngle,
+          endAngle - startAngle,
+          false,
+          _strokePaint,
+        );
+      case ArcMode.chord:
+        final chordPath = Path()
+          ..addArc(ellipse.rect, startAngle, endAngle - startAngle)
+          ..close();
+        canvas.drawArc(
+          ellipse.rect,
+          startAngle,
+          endAngle - startAngle,
+          true,
+          _fillPaint,
+        );
+        canvas.drawPath(
+          chordPath,
+          _strokePaint,
+        );
+      case ArcMode.pie:
+        canvas.drawArc(
+          ellipse.rect,
+          startAngle,
+          endAngle - startAngle,
+          true,
+          _fillPaint,
+        );
+        canvas.drawArc(
+          ellipse.rect,
+          startAngle,
+          endAngle - startAngle,
+          true,
+          _strokePaint,
+        );
+      case ArcMode.openStrokePieFill:
+        canvas.drawArc(
+          ellipse.rect,
+          startAngle,
+          endAngle - startAngle,
+          true,
+          _fillPaint,
+        );
+        canvas.drawArc(
+          ellipse.rect,
+          startAngle,
+          endAngle - startAngle,
+          false,
+          _strokePaint,
+        );
+    }
   }
 
   void square(Square square) {
@@ -237,6 +306,8 @@ class Ellipse {
   final Rect _rect;
   Rect get rect => _rect;
 }
+
+enum ArcMode { openStrokePieFill, open, chord, pie }
 
 class _SketchPainter extends CustomPainter {
   _SketchPainter({required this.sketch}) : assert(sketch != null);
