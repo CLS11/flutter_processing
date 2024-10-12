@@ -242,7 +242,7 @@ void main() {
                   ..fill(color: Color.fromARGB(255, 255, 255, 255))
                   ..ellipse(
                     Ellipse.fromCenterWithRadius(
-                      center: const Offset(56, 46),
+                      center: const Offset(50, 50),
                       radius1: 30,
                       radius2: 30,
                     ),
@@ -250,7 +250,7 @@ void main() {
                   ..fill(color: Color.fromARGB(255, 100, 100, 100))
                   ..ellipse(
                     Ellipse.fromCenter(
-                      center: const Offset(56, 46),
+                      center: const Offset(50, 50),
                       width: 30,
                       height: 30,
                     ),
