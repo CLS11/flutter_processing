@@ -1,18 +1,47 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 
-class Processing extends StatelessWidget {
+class Processing extends StatefulWidget {
   const Processing({required this.sketch, super.key});
 
   final Sketch sketch;
+
+  @override
+  State<Processing> createState() => _ProcessingState();
+}
+
+class _ProcessingState extends State<Processing>
+    with SingleTickerProviderStateMixin {
+  late Ticker _ticker;
+
+  @override
+  void initState() {
+    super.initState();
+    _ticker = createTicker(_onTick)..start();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _ticker.dispose();
+  }
+
+  void _onTick(elapsedTime) {
+    setState(
+      () {
+        widget.sketch.draw();
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
     return CustomPaint(
       size: Size.infinite,
       painter: _SketchPainter(
-        sketch: sketch,
+        sketch: widget.sketch,
       ),
     );
   }
@@ -29,11 +58,18 @@ class Sketch {
 
   late void Function(Sketch)? _setup = (s) {};
   late void Function(Sketch)? _draw = (s) {};
+
+  bool _hasDoneSetup = false;
+
   void _doSetup() {
+    if (_hasDoneSetup) {
+      return;
+    }
+    _hasDoneSetup = true;
     assert(canvas != null);
     assert(size != null);
     //Default background color
-    background(color: const Color(0xFFC5C5C5));
+    background(color: _backgroundColor);
 
     _fillPaint = Paint()
       ..color = const Color(0xFFFFFFFF)
@@ -50,6 +86,12 @@ class Sketch {
     _setup?.call(this);
   }
 
+  void _onDraw() {
+    background(color: _backgroundColor);
+    draw();
+    _frameCount += 1;
+  }
+
   void draw() {
     _draw?.call(this);
   }
@@ -58,6 +100,13 @@ class Sketch {
   late Size size;
   late Paint _fillPaint;
   late Paint _strokePaint;
+  late final Color _backgroundColor = const Color(0xffc5c5c5c5c);
+
+  //***************ENVIRONMENT*************//
+  int _frameCount = 0;
+  int get frameCount => _frameCount;
+  int _actualFrameRate;
+  int get frameRate => _actualFrameRate;
 
   //***************RANDOM******************//
 
@@ -343,7 +392,7 @@ class _SketchPainter extends CustomPainter {
       ..canvas = canvas
       ..size = size
       .._doSetup()
-      ..draw();
+      .._onDraw();
   }
 
   @override
