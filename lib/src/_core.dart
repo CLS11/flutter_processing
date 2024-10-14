@@ -23,15 +23,27 @@ class _ProcessingState extends State<Processing>
   }
 
   @override
+  void didUpdateWidget(Processing oldWidget) {
+    super.didUpdateWidget(oldWidget);
+
+    if (widget.sketch != oldWidget.sketch) {
+      _ticker
+        ..stop()
+        ..start();
+    }
+  }
+
+  @override
   void dispose() {
     super.dispose();
     _ticker.dispose();
   }
 
-  void _onTick(elapsedTime) {
+  void _onTick(dynamic elapsedTime) {
     setState(
       () {
         widget.sketch.draw();
+        widget.sketch.elapsedTime = elapsedTime as Duration;
       },
     );
   }
@@ -88,8 +100,22 @@ class Sketch {
 
   void _onDraw() {
     background(color: _backgroundColor);
+
     draw();
+
+    if (_lastDrawTime != null) {
+      if (_elapsedTime - _lastDrawTime! < _desiredFrameTime) {
+        return;
+      }
+    }
+
     _frameCount += 1;
+    _lastDrawTime = _elapsedTime;
+
+    final secondsFraction = _elapsedTime.inMilliseconds / 1000.0;
+    _actualFrameRate = secondsFraction > 0
+        ? (_frameCount / secondsFraction).round()
+        : _actualFrameRate;
   }
 
   void draw() {
@@ -103,10 +129,18 @@ class Sketch {
   late final Color _backgroundColor = const Color(0xffc5c5c5c5c);
 
   //***************ENVIRONMENT*************//
+  Duration _elapsedTime = Duration.zero;
+  set elapsedTime(Duration newElapsedTime) => _elapsedTime = newElapsedTime;
+
+  Duration? _lastDrawTime;
+
   int _frameCount = 0;
   int get frameCount => _frameCount;
-  int _actualFrameRate;
+  int _actualFrameRate = 10;
   int get frameRate => _actualFrameRate;
+  Duration _desiredFrameTime = Duration(milliseconds: (1000.0 / 60).floor());
+  set frameRate(int frameRate) =>
+      _desiredFrameTime = Duration(milliseconds: (1000.0 / frameRate).floor());
 
   //***************RANDOM******************//
 
