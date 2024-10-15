@@ -50,10 +50,15 @@ class _ProcessingState extends State<Processing>
 
   @override
   Widget build(BuildContext context) {
-    return CustomPaint(
-      size: Size.infinite,
-      painter: _SketchPainter(
-        sketch: widget.sketch,
+    return Center(
+      child: CustomPaint(
+        size: Size(
+          widget.sketch._desiredWidth.toDouble(),
+          widget.sketch._desiredHeight.toDouble(),
+        ),
+        painter: _SketchPainter(
+          sketch: widget.sketch,
+        ),
       ),
     );
   }
@@ -78,7 +83,7 @@ class Sketch {
       return;
     }
     _hasDoneSetup = true;
-    assert(canvas != null);
+    assert(_canvas != null);
     assert(size != null);
     //Default background color
     background(color: _backgroundColor);
@@ -122,11 +127,14 @@ class Sketch {
     _draw?.call(this);
   }
 
-  late Canvas canvas;
+  late Canvas _canvas;
   late Size size;
   late Paint _fillPaint;
   late Paint _strokePaint;
-  late final Color _backgroundColor = const Color(0xffc5c5c5c5c);
+  late Color _backgroundColor = const Color(0xffc5c5c5c5c);
+
+  int _desiredWidth = 100;
+  int _desiredHeight = 100;
 
   //***************ENVIRONMENT*************//
   Duration _elapsedTime = Duration.zero;
@@ -141,6 +149,15 @@ class Sketch {
   Duration _desiredFrameTime = Duration(milliseconds: (1000.0 / 60).floor());
   set frameRate(int frameRate) =>
       _desiredFrameTime = Duration(milliseconds: (1000.0 / frameRate).floor());
+
+  int get width => size.width.toInt();
+
+  int get height => size.height.toInt();
+
+  void setSize({required int width, required int height}) {
+    _desiredWidth = width;
+    _desiredHeight = height;
+  }
 
   //***************RANDOM******************//
 
@@ -166,8 +183,9 @@ class Sketch {
   //**************COLOR/SETTING **************//
 
   void background({required Color color}) {
+    _backgroundColor = color;
     final paint = Paint()..color = color;
-    canvas.drawRect(Offset.zero & size, paint);
+    _canvas.drawRect(Offset.zero & size, paint);
   }
 
   void fill({
@@ -195,13 +213,13 @@ class Sketch {
     required Offset center,
     required double diameter,
   }) {
-    canvas
+    _canvas
       ..drawCircle(center, diameter / 2, _fillPaint)
       ..drawCircle(center, diameter / 2, _strokePaint);
   }
 
   void ellipse(Ellipse ellipse) {
-    canvas
+    _canvas
       ..drawOval(ellipse.rect, _fillPaint)
       ..drawOval(ellipse.rect, _strokePaint);
   }
@@ -214,14 +232,14 @@ class Sketch {
   }) {
     switch (mode) {
       case ArcMode.open:
-        canvas.drawArc(
+        _canvas.drawArc(
           ellipse.rect,
           startAngle,
           endAngle - startAngle,
           false,
           _fillPaint,
         );
-        canvas.drawArc(
+        _canvas.drawArc(
           ellipse.rect,
           startAngle,
           endAngle - startAngle,
@@ -232,26 +250,26 @@ class Sketch {
         final chordPath = Path()
           ..addArc(ellipse.rect, startAngle, endAngle - startAngle)
           ..close();
-        canvas.drawArc(
+        _canvas.drawArc(
           ellipse.rect,
           startAngle,
           endAngle - startAngle,
           true,
           _fillPaint,
         );
-        canvas.drawPath(
+        _canvas.drawPath(
           chordPath,
           _strokePaint,
         );
       case ArcMode.pie:
-        canvas.drawArc(
+        _canvas.drawArc(
           ellipse.rect,
           startAngle,
           endAngle - startAngle,
           true,
           _fillPaint,
         );
-        canvas.drawArc(
+        _canvas.drawArc(
           ellipse.rect,
           startAngle,
           endAngle - startAngle,
@@ -259,14 +277,14 @@ class Sketch {
           _strokePaint,
         );
       case ArcMode.openStrokePieFill:
-        canvas.drawArc(
+        _canvas.drawArc(
           ellipse.rect,
           startAngle,
           endAngle - startAngle,
           true,
           _fillPaint,
         );
-        canvas.drawArc(
+        _canvas.drawArc(
           ellipse.rect,
           startAngle,
           endAngle - startAngle,
@@ -277,7 +295,7 @@ class Sketch {
   }
 
   void square(Square square) {
-    canvas
+    _canvas
       ..drawRect(square.rect, _fillPaint)
       ..drawRect(square.rect, _strokePaint);
   }
@@ -287,7 +305,7 @@ class Sketch {
     BorderRadius? borderRadius,
   }) {
     if (borderRadius == null) {
-      canvas
+      _canvas
         ..drawRect(rect, _fillPaint)
         ..drawRect(rect, _strokePaint);
     } else {
@@ -298,7 +316,7 @@ class Sketch {
         bottomLeft: borderRadius.bottomLeft,
         bottomRight: borderRadius.bottomRight,
       );
-      canvas
+      _canvas
         ..drawRRect(rrect, _fillPaint)
         ..drawRRect(rrect, _strokePaint);
     }
@@ -310,7 +328,7 @@ class Sketch {
       ..lineTo(pt2.dx, pt2.dy)
       ..lineTo(pt3.dx, pt3.dy)
       ..close();
-    canvas
+    _canvas
       ..drawPath(path, _fillPaint)
       ..drawPath(path, _strokePaint);
   }
@@ -322,7 +340,7 @@ class Sketch {
       ..lineTo(pt3.dx, pt3.dy)
       ..lineTo(pt4.dx, pt4.dy)
       ..close();
-    canvas
+    _canvas
       ..drawPath(path, _fillPaint)
       ..drawPath(path, _strokePaint);
   }
@@ -331,7 +349,7 @@ class Sketch {
     if (pt3 != null) {
       throw UnimplementedError('3D line drawing is not yet supported.');
     }
-    canvas.drawLine(pt1, pt2, _strokePaint);
+    _canvas.drawLine(pt1, pt2, _strokePaint);
   }
 
   void point({required double x, required double y, double? z}) {
@@ -339,7 +357,7 @@ class Sketch {
       throw UnimplementedError('3d point drawing is not yet supported.');
     }
     _strokePaint.style = PaintingStyle.fill;
-    canvas.drawRect(
+    _canvas.drawRect(
       Rect.fromLTWH(x, y, 1, 1),
       _strokePaint,
     );
@@ -423,7 +441,7 @@ class _SketchPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     sketch
-      ..canvas = canvas
+      .._canvas = canvas
       ..size = size
       .._doSetup()
       .._onDraw();
