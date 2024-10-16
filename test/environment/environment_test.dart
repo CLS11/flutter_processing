@@ -29,7 +29,7 @@ void main() {
         tester,
         'environment_width-example-1',
         customPump: (tester) async {
-          await tester.pumpAndSettle();
+          await tester.pump(const Duration(milliseconds: 17));
         },
       );
     });
@@ -54,7 +54,7 @@ void main() {
         tester,
         'environment_height-example-1',
         customPump: (tester) async {
-          await tester.pumpAndSettle();
+          await tester.pump(const Duration(milliseconds: 17));
         },
       );
     });
@@ -68,7 +68,7 @@ void main() {
         Processing(
           sketch: Sketch.simple(
             setup: (s) {
-              s.setSize(width: 500, height: 500);
+              s.size(width: 500, height: 500);
             },
             draw: (s) {
               s.circle(center: const Offset(50, 50), diameter: 25);
@@ -81,7 +81,7 @@ void main() {
         tester,
         'environment_size-example-1',
         customPump: (tester) async {
-          await tester.pumpAndSettle();
+          await tester.pump(const Duration(milliseconds: 17));
         },
       );
     });
