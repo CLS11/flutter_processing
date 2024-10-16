@@ -19,7 +19,7 @@ class _ProcessingState extends State<Processing>
   @override
   void initState() {
     super.initState();
-    _ticker = createTicker(_onTick)..start();
+    _ticker = Ticker(_onTick)..start();
   }
 
   @override
@@ -35,12 +35,12 @@ class _ProcessingState extends State<Processing>
 
   @override
   void dispose() {
-    super.dispose();
     _ticker.dispose();
+    super.dispose();
   }
 
   void _onTick(dynamic elapsedTime) {
-    print('Tick: $elapsedTime');
+    if (!mounted) return;
     setState(
       () {
         widget.sketch.draw();
