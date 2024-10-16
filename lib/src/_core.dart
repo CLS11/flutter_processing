@@ -40,6 +40,7 @@ class _ProcessingState extends State<Processing>
   }
 
   void _onTick(dynamic elapsedTime) {
+    print('Tick: $elapsedTime');
     setState(
       () {
         widget.sketch.draw();
@@ -128,7 +129,7 @@ class Sketch {
   }
 
   late Canvas _canvas;
-  late Size size;
+  late Size _size;
   late Paint _fillPaint;
   late Paint _strokePaint;
   late Color _backgroundColor = const Color(0xffc5c5c5c5c);
@@ -150,11 +151,11 @@ class Sketch {
   set frameRate(int frameRate) =>
       _desiredFrameTime = Duration(milliseconds: (1000.0 / frameRate).floor());
 
-  int get width => size.width.toInt();
+  int get width => _size.width.toInt();
 
-  int get height => size.height.toInt();
+  int get height => _size.height.toInt();
 
-  void setSize({required int width, required int height}) {
+  void size({required int width, required int height}) {
     _desiredWidth = width;
     _desiredHeight = height;
   }
@@ -185,7 +186,7 @@ class Sketch {
   void background({required Color color}) {
     _backgroundColor = color;
     final paint = Paint()..color = color;
-    _canvas.drawRect(Offset.zero & size, paint);
+    _canvas.drawRect(Offset.zero & _size, paint);
   }
 
   void fill({
@@ -442,7 +443,7 @@ class _SketchPainter extends CustomPainter {
   void paint(Canvas canvas, Size size) {
     sketch
       .._canvas = canvas
-      ..size = size
+      .._size = size
       .._doSetup()
       .._onDraw();
   }
