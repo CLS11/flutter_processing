@@ -26,11 +26,11 @@ class _HomeScreenState extends State<HomeScreen> {
         child: Processing(
           sketch: Sketch.simple(
             setup: (s) {
-              final width = 800;
-              final height = 800;
+              const width = 1600;
+              const height = 900;
 
               s
-                ..setSize(width: width, height: height)
+                ..size(width: width, height: height)
                 ..background(color: Colors.black);
 
               if (_stars.isEmpty) {
@@ -48,9 +48,13 @@ class _HomeScreenState extends State<HomeScreen> {
             draw: (s) {
               s.background(color: Colors.black);
               for (final star in _stars) {
-                star
-                  ..update()
-                  ..paint(s);
+                star.update(s);
+              }
+              for (final star in _stars) {
+                star.paintStreak(s);
+              }
+              for (final star in _stars) {
+                star.paintStar(s);
               }
             },
           ),
