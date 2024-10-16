@@ -364,6 +364,19 @@ class Sketch {
     );
     _strokePaint.style = PaintingStyle.stroke;
   }
+
+  //******************TRANSFORM***************//
+  void translate({
+    double? x,
+    double? y,
+    double? z,
+  }) {
+    if (z != null) {
+      throw UnimplementedError('3D translations are not yet supported');
+    }
+
+    _canvas.translate(x ?? 0, y ?? 0);
+  }
 }
 
 class Square {
