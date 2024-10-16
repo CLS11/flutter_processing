@@ -1,6 +1,7 @@
 import 'package:example/star.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_processing/flutter_processing.dart';
+import 'package:example/droplet.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -10,12 +11,15 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  final _stars = <Star>[];
+  //final _stars = <Star>[];
+
+  final _droplets = <Droplet>[];
 
   @override
   void reassemble() {
     super.reassemble();
-    _stars.clear();
+    // _stars.clear();
+    _droplets.clear();
   }
 
   @override
@@ -26,35 +30,28 @@ class _HomeScreenState extends State<HomeScreen> {
         child: Processing(
           sketch: Sketch.simple(
             setup: (s) {
-              const width = 1600;
-              const height = 900;
-
+              final width = 640;
+              final height = 360;
               s
                 ..size(width: width, height: height)
-                ..background(color: Colors.black);
+                ..background(color: Color.fromARGB(255, 200, 175, 250));
 
-              if (_stars.isEmpty) {
-                for (int i = 0; i < 100; ++i) {
-                  _stars.add(
-                    Star(
-                      x: s.random((-width / 2).toInt(), (width / 2).toInt()),
-                      y: s.random((-height / 2).toInt(), (height / 2).toInt()),
-                      z: s.random(width),
-                    ),
-                  );
-                }
+              for (int i = 0; i < 100; ++i) {
+                _droplets.add(
+                  Droplet(
+                    x: s.random(width),
+                    y: s.random(-height, 0),
+                    z: s.random(1),
+                    length: 20,
+                  ),
+                );
               }
             },
             draw: (s) {
-              s.background(color: Colors.black);
-              for (final star in _stars) {
-                star.update(s);
-              }
-              for (final star in _stars) {
-                star.paintStreak(s);
-              }
-              for (final star in _stars) {
-                star.paintStar(s);
+              for (final droplet in _droplets) {
+                droplet
+                  ..fall(s)
+                  ..show(s);
               }
             },
           ),
