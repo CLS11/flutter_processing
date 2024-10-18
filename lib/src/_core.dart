@@ -20,6 +20,9 @@ class _ProcessingState extends State<Processing>
   void initState() {
     super.initState();
     _ticker = Ticker(_onTick)..start();
+
+    widget.sketch._loop = _loop;
+    widget.sketch._noLoop = _noLoop;
   }
 
   @override
@@ -27,9 +30,16 @@ class _ProcessingState extends State<Processing>
     super.didUpdateWidget(oldWidget);
 
     if (widget.sketch != oldWidget.sketch) {
-      _ticker
-        ..stop()
-        ..start();
+      oldWidget.sketch
+        .._loop = null
+        .._noLoop = null;
+      widget.sketch
+        .._loop = _loop
+        .._noLoop = _noLoop;
+      _ticker.stop();
+      if (widget.sketch._isLooping) {
+        _ticker.start();
+      }
     }
   }
 
@@ -47,6 +57,18 @@ class _ProcessingState extends State<Processing>
         widget.sketch.elapsedTime = elapsedTime as Duration;
       },
     );
+  }
+
+  void _noLoop() {
+    if (_ticker.isTicking) {
+      _ticker.stop();
+    }
+  }
+
+  void _loop() {
+    if (!_ticker.isTicking) {
+      _ticker.start();
+    }
   }
 
   @override
@@ -136,6 +158,21 @@ class Sketch {
 
   int _desiredWidth = 100;
   int _desiredHeight = 100;
+
+  //***************STRUCTURE***************//
+  bool _isLooping = true;
+  VoidCallback? _loop;
+  VoidCallback? _noLoop;
+
+  void loop() {
+    _isLooping = true;
+    _loop?.call();
+  }
+
+  void noLoop() {
+    _isLooping = false;
+    _noLoop?.call();
+  }
 
   //***************ENVIRONMENT*************//
   Duration _elapsedTime = Duration.zero;
