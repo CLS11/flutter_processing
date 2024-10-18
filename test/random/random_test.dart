@@ -8,7 +8,9 @@ void main() {
         Processing(
           sketch: Sketch.simple(
             draw: (s) {
-              s.randomSeed(0);
+              s
+                ..noLoop()
+                ..randomSeed(0);
               double randomValue = s.random(50);
               expect(randomValue, 41.27570359435851);
 
