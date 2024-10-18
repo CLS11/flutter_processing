@@ -16,6 +16,7 @@ void main() {
           sketch: Sketch.simple(
             draw: (s) {
               s
+                ..noLoop()
                 ..noStroke()
                 ..background(color: Colors.black)
                 ..rect(rect: Rect.fromLTWH(0, 40, s.width.toDouble(), 20))
@@ -28,9 +29,9 @@ void main() {
       await screenMatchesGolden(
         tester,
         'environment_width-example-1',
-        customPump: (tester) async {
-          await tester.pump(const Duration(milliseconds: 17));
-        },
+        // customPump: (tester) async {
+        //   await tester.pump(const Duration(milliseconds: 17));
+        // },
       );
     });
 
@@ -41,6 +42,7 @@ void main() {
           sketch: Sketch.simple(
             draw: (s) {
               s
+                ..noLoop()
                 ..noStroke()
                 ..background(color: Colors.black)
                 ..rect(rect: Rect.fromLTWH(40, 0, 20, s.height.toDouble()))
@@ -53,9 +55,9 @@ void main() {
       await screenMatchesGolden(
         tester,
         'environment_height-example-1',
-        customPump: (tester) async {
-          await tester.pump(const Duration(milliseconds: 17));
-        },
+        // customPump: (tester) async {
+        //  await tester.pump(const Duration(milliseconds: 17));
+        // },
       );
     });
 
@@ -68,7 +70,9 @@ void main() {
         Processing(
           sketch: Sketch.simple(
             setup: (s) {
-              s.size(width: 500, height: 500);
+              s
+                ..noLoop()
+                ..size(width: 500, height: 500);
             },
             draw: (s) {
               s.circle(center: const Offset(50, 50), diameter: 25);
@@ -80,9 +84,9 @@ void main() {
       await screenMatchesGolden(
         tester,
         'environment_size-example-1',
-        customPump: (tester) async {
-          await tester.pump(const Duration(milliseconds: 17));
-        },
+        // customPump: (tester) async {
+        //   await tester.pump(const Duration(milliseconds: 17));
+        // },
       );
     });
   });
