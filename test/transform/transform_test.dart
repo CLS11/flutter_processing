@@ -12,13 +12,14 @@ void main() {
           sketch: Sketch.simple(
             draw: (s) {
               s
+                ..noLoop()
                 ..translate(x: 30, y: 20)
                 ..rect(rect: Rect.fromLTWH(0, 0, 55, 55));
             },
           ),
         ),
       );
-      await tester.pumpAndSettle();
+      //await tester.pumpAndSettle();
       await screenMatchesGolden(tester, 'transform_translate-example-1');
     });
 
@@ -28,6 +29,7 @@ void main() {
           sketch: Sketch.simple(
             draw: (s) {
               s
+                ..noLoop()
                 ..rect(rect: Rect.fromLTWH(0, 0, 55, 55))
                 ..translate(x: 30, y: 20)
                 ..rect(rect: Rect.fromLTWH(0, 0, 55, 55))
@@ -37,7 +39,7 @@ void main() {
           ),
         ),
       );
-      await tester.pumpAndSettle();
+      //await tester.pumpAndSettle();
       await screenMatchesGolden(tester, 'transform_translate-example-2');
     });
   });
