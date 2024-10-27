@@ -4,9 +4,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 
 class Processing extends StatefulWidget {
-  const Processing({required this.sketch, super.key});
+  const Processing({
+    required this.sketch,
+    this.clipBehavior = Clip.hardEdge,
+    super.key,
+  });
 
   final Sketch sketch;
+  final Clip clipBehavior;
 
   @override
   State<Processing> createState() => _ProcessingState();
@@ -81,6 +86,7 @@ class _ProcessingState extends State<Processing>
         ),
         painter: _SketchPainter(
           sketch: widget.sketch,
+          clipBehavior: widget.clipBehavior,
         ),
       ),
     );
@@ -494,12 +500,23 @@ class Ellipse {
 enum ArcMode { openStrokePieFill, open, chord, pie }
 
 class _SketchPainter extends CustomPainter {
-  _SketchPainter({required this.sketch}) : assert(sketch != null);
+  _SketchPainter({
+    required this.sketch,
+    required this.clipBehavior,
+  }) : assert(sketch != null);
 
   final Sketch sketch;
+  final Clip clipBehavior;
 
   @override
   void paint(Canvas canvas, Size size) {
+    if (clipBehavior != Clip.none) {
+      canvas.clipRect(Offset.zero & size,
+          doAntiAlias: clipBehavior == Clip.antiAlias ||
+              clipBehavior == Clip.antiAliasWithSaveLayer);
+
+      //Save layer for antiAliasWithSaveLayer
+    }
     sketch
       .._canvas = canvas
       .._size = size
