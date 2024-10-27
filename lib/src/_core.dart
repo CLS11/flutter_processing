@@ -402,6 +402,15 @@ class Sketch {
     _strokePaint.style = PaintingStyle.stroke;
   }
 
+  //******************SHAPE/ATTRIBUTES***********//
+  void strokeWeight(int newWeight) {
+    if (newWeight < 0) {
+      throw Exception('Stroke weight must be greater than 0');
+    }
+
+    _strokePaint.strokeWidth = newWeight.toDouble();
+  }
+
   //******************TRANSFORM***************//
   void translate({
     double? x,
