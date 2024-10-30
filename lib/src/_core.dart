@@ -2,6 +2,7 @@
 
 import 'dart:math';
 
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
@@ -128,20 +129,99 @@ class _ProcessingState extends State<Processing>
     }
   }
 
+  MouseButton _getMouseButton(int mouseButtonMask) {
+    if (mouseButtonMask & kPrimaryButton != 0) {
+      return MouseButton.left;
+    } else if (mouseButtonMask & kSecondaryButton != 0) {
+      return MouseButton.right;
+    } else if (mouseButtonMask & kMiddleMouseButton != 0) {
+      return MouseButton.center;
+    } else {
+      throw Exception('Invalid mouse button mask: $mouseButtonMask');
+    }
+  }
+
+  void _onPointerDown(PointerDownEvent event) {
+    if (event.kind != PointerDeviceKind.mouse) {
+      return;
+    }
+    final mouseButton = _getMouseButton(event.buttons);
+
+    widget.sketch._pressedMouseButtons.add(mouseButton);
+    widget.sketch
+      .._mouseButton = mouseButton
+      .._updateMousePosition(event.position)
+      .._onMousePressed();
+  }
+
+  void _onPointerMove(PointerMoveEvent event) {
+    if (event.kind != PointerDeviceKind.mouse) {
+      return;
+    }
+    final mouseButton = _getMouseButton(event.buttons);
+
+    widget.sketch
+      .._mouseButton = mouseButton
+      .._updateMousePosition(event.position)
+      .._onMouseDragged();
+  }
+
+  void _onPointerUp(PointerUpEvent event) {
+    if (event.kind != PointerDeviceKind.mouse) {
+      return;
+    }
+    final mouseButton = _getMouseButton(event.buttons);
+
+    widget.sketch._pressedMouseButtons.add(mouseButton);
+    widget.sketch
+      .._mouseButton = mouseButton
+      .._updateMousePosition(event.position)
+      .._onMouseReleased()
+      .._onPointerClicked();
+  }
+
+  void _onPointerCancel(PointerCancelEvent event) {
+    if (event.kind != PointerDeviceKind.mouse) {
+      return;
+    }
+    final mouseButton = _getMouseButton(event.buttons);
+    widget.sketch._pressedMouseButtons.add(mouseButton);
+    widget.sketch
+      .._mouseButton = mouseButton
+      .._updateMousePosition(event.position)
+      .._onMouseReleased();
+  }
+
+  void _onPointerHover(PointerHoverEvent event) {
+    if (event.kind != PointerDeviceKind.mouse) {
+      return;
+    }
+    widget.sketch
+      .._updateMousePosition(event.position)
+      .._onMouseMoved();
+  }
+
   @override
   Widget build(BuildContext context) {
     return RawKeyboardListener(
       focusNode: _focusNode,
       onKey: _onKey,
-      child: Center(
-        child: CustomPaint(
-          size: Size(
-            widget.sketch._desiredWidth.toDouble(),
-            widget.sketch._desiredHeight.toDouble(),
-          ),
-          painter: _SketchPainter(
-            sketch: widget.sketch,
-            clipBehavior: widget.clipBehavior,
+      child: Listener(
+        onPointerDown: _onPointerDown,
+        onPointerMove: _onPointerMove,
+        onPointerHover: _onPointerHover,
+        onPointerUp: _onPointerUp,
+        onPointerCancel: _onPointerCancel,
+        child: Center(
+          child: CustomPaint(
+            size: Size(
+              widget.sketch._desiredWidth.toDouble(),
+              widget.sketch._desiredHeight.toDouble(),
+            ),
+            painter: _SketchPainter(
+              sketch: widget.sketch,
+              clipBehavior: widget.clipBehavior,
+            ),
           ),
         ),
       ),
@@ -224,7 +304,6 @@ class Sketch {
   void _onKeyPressed(LogicalKeyboardKey key) {
     _pressedKeys.add(key);
     _key = key;
-    _isKeyPressed = true;
     keyPressed();
   }
 
@@ -235,7 +314,6 @@ class Sketch {
   void _onKeyReleased(LogicalKeyboardKey key) {
     _pressedKeys.remove(key);
     _key = key;
-    _isKeyPressed = _pressedKeys.length > 0;
     keyReleased();
   }
 
@@ -514,10 +592,35 @@ class Sketch {
 
   //******************INPUT/KEYBOARD***************//
   Set<LogicalKeyboardKey> _pressedKeys = {};
-  bool _isKeyPressed = false;
-  bool get isKeyPressed => _isKeyPressed;
+
+  bool get isKeyPressed => _pressedKeys.isNotEmpty;
   LogicalKeyboardKey? _key;
   LogicalKeyboardKey? get key => _key;
+
+  //******************INPUT/MOUSE******************//
+  Set<MouseButton> _pressedMouseButtons = {};
+  int _mouseX = 0;
+  int get mouseX => _mouseX;
+  int _mouseY = 0;
+  int get mouseY => _mouseY;
+
+  int _pmouseX = 0;
+  int get pmouseX => _pmouseX;
+  int _pmouseY = 0;
+  int get pmouseY => _pmouseY;
+
+  bool get isMousePressed => _pressedMouseButtons.isNotEmpty;
+
+  MouseButton? _mouseButton;
+  MouseButton? get mouseButton => _mouseButton;
+
+  void _updateMousePosition(Offset newPosition) {
+    _pmouseX = _mouseX;
+    _pmouseY = _mouseY;
+
+    _mouseX = newPosition.dx.round();
+    _mouseY = newPosition.dy.round();
+  }
 
   //******************TRANSFORM***************//
   void translate({
@@ -531,6 +634,12 @@ class Sketch {
 
     _canvas.translate(x ?? 0, y ?? 0);
   }
+}
+
+enum MouseButton {
+  left,
+  center,
+  right,
 }
 
 class Square {
