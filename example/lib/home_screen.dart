@@ -30,7 +30,8 @@ class _HomeScreenState extends State<HomeScreen> {
         child: Processing(
           sketch: Sketch.simple(
             setup: (s) {
-              final width = 640;
+              s.size(width: 500, height: 500);
+              /*final width = 640;
               final height = 360;
               s
                 ..size(width: width, height: height)
@@ -45,14 +46,42 @@ class _HomeScreenState extends State<HomeScreen> {
                     length: 20,
                   ),
                 );
-              }
+              }*/
             },
             draw: (s) {
-              for (final droplet in _droplets) {
+              /*for (final droplet in _droplets) {
                 droplet
                   ..fall(s)
                   ..show(s);
-              }
+              }*/
+            },
+            mouseMoved: (s) {
+              // print(
+              // "mouseMoved - current position: ${s.mouseX}, ${s.mouseY}, previous position: ${s.pmouseX}, ${s.pmouseY}",
+              // );
+            },
+            mousePressed: (s) {
+              //print(
+              // 'mousePressed - current position: ${s.mouseX}, ${s.mouseY}, previous position: ${s.pmouseX}, ${s.pmouseY}',
+              // );
+            },
+            mouseReleased: (s) {
+              //  print(
+              // "mouseReleased - current position: ${s.mouseX}, ${s.mouseY}, previous position: ${s.pmouseX}, ${s.pmouseY}",
+              // );
+            },
+            mouseClicked: (s) {
+              // print(
+              // "mouseClicked - current position: ${s.mouseX}, ${s.mouseY}, previous position: ${s.pmouseX}, ${s.pmouseY}",
+              // );
+            },
+            mouseDragged: (s) {
+              // print(
+              //  "mouseDragged - current position: ${s.mouseX}, ${s.mouseY}, previous position: ${s.pmouseX}, ${s.pmouseY},",
+              // );
+            },
+            mouseWheel: (s, count) {
+              print('mouseWheel - count: $count');
             },
           ),
         ),
