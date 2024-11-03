@@ -48,6 +48,8 @@ class _ProcessingState extends State<Processing>
     LogicalKeyboardKey.pageDown,
     LogicalKeyboardKey.pageUp,
   };
+
+  final GlobalKey _sketchCanvasKey = GlobalKey();
   late Ticker _ticker;
   late FocusNode _focusNode;
 
@@ -141,6 +143,13 @@ class _ProcessingState extends State<Processing>
     }
   }
 
+  Offset _getCanvasOffsetFromWidgetOffset(Offset widgetOffset) {
+    final myBox = context.findRenderObject();
+    final canvasBox =
+        _sketchCanvasKey.currentContext!.findRenderObject() as RenderBox;
+    return canvasBox.globalToLocal(widgetOffset, ancestor: myBox);
+  }
+
   void _onPointerDown(PointerDownEvent event) {
     if (event.kind != PointerDeviceKind.mouse) {
       return;
@@ -150,7 +159,7 @@ class _ProcessingState extends State<Processing>
     widget.sketch._pressedMouseButtons.add(mouseButton);
     widget.sketch
       .._mouseButton = mouseButton
-      .._updateMousePosition(event.position)
+      .._updateMousePosition(_getCanvasOffsetFromWidgetOffset(event.position))
       .._onMousePressed();
   }
 
@@ -162,7 +171,7 @@ class _ProcessingState extends State<Processing>
 
     widget.sketch
       .._mouseButton = mouseButton
-      .._updateMousePosition(event.position)
+      .._updateMousePosition(_getCanvasOffsetFromWidgetOffset(event.position))
       .._onMouseDragged();
   }
 
@@ -170,25 +179,26 @@ class _ProcessingState extends State<Processing>
     if (event.kind != PointerDeviceKind.mouse) {
       return;
     }
-    final mouseButton = _getMouseButton(event.buttons);
+    //final mouseButton = _getMouseButton(event.buttons);
 
-    widget.sketch._pressedMouseButtons.add(mouseButton);
+    widget.sketch._pressedMouseButtons
+        .clear(); //We don't know which button was released hence removing all the pressed buttons
     widget.sketch
-      .._mouseButton = mouseButton
-      .._updateMousePosition(event.position)
+      .._mouseButton = null
+      .._updateMousePosition(_getCanvasOffsetFromWidgetOffset(event.position))
       .._onMouseReleased()
-      .._onPointerClicked();
+      .._onMouseClicked();
   }
 
   void _onPointerCancel(PointerCancelEvent event) {
     if (event.kind != PointerDeviceKind.mouse) {
       return;
     }
-    final mouseButton = _getMouseButton(event.buttons);
-    widget.sketch._pressedMouseButtons.add(mouseButton);
+    //final mouseButton = _getMouseButton(event.buttons);
+    widget.sketch._pressedMouseButtons.clear();
     widget.sketch
-      .._mouseButton = mouseButton
-      .._updateMousePosition(event.position)
+      .._mouseButton = null
+      .._updateMousePosition(_getCanvasOffsetFromWidgetOffset(event.position))
       .._onMouseReleased();
   }
 
@@ -197,8 +207,16 @@ class _ProcessingState extends State<Processing>
       return;
     }
     widget.sketch
-      .._updateMousePosition(event.position)
+      .._updateMousePosition(_getCanvasOffsetFromWidgetOffset(event.position))
       .._onMouseMoved();
+  }
+
+  void _onPointerSignal(PointerSignalEvent event) {
+    if (event is! PointerScrollEvent) {
+      return;
+    }
+
+    widget.sketch._onMouseWheel(event.scrollDelta.dy);
   }
 
   @override
@@ -212,8 +230,10 @@ class _ProcessingState extends State<Processing>
         onPointerHover: _onPointerHover,
         onPointerUp: _onPointerUp,
         onPointerCancel: _onPointerCancel,
+        onPointerSignal: _onPointerSignal,
         child: Center(
           child: CustomPaint(
+            key: _sketchCanvasKey,
             size: Size(
               widget.sketch._desiredWidth.toDouble(),
               widget.sketch._desiredHeight.toDouble(),
@@ -238,17 +258,35 @@ class Sketch {
     void Function(Sketch)? keyPressed,
     void Function(Sketch)? keyReleased,
     void Function(Sketch)? keyTyped,
+    void Function(Sketch)? mousePressed,
+    void Function(Sketch)? mouseDragged,
+    void Function(Sketch)? mouseReleased,
+    void Function(Sketch)? mouseClicked,
+    void Function(Sketch)? mouseMoved,
+    void Function(Sketch, double)? mouseWheel,
   })  : _setup = setup,
         _draw = draw,
         _keyPressed = keyPressed,
         _keyReleased = keyReleased,
-        _keyTyped = keyTyped;
+        _keyTyped = keyTyped,
+        _mousePressed = mousePressed,
+        _mouseDragged = mouseDragged,
+        _mouseReleased = mouseReleased,
+        _mouseClicked = mouseClicked,
+        _mouseMoved = mouseMoved,
+        _mouseWheel = mouseWheel;
 
   late void Function(Sketch)? _setup = (s) {};
   late void Function(Sketch)? _draw = (s) {};
   late void Function(Sketch)? _keyPressed = (s) {};
   late void Function(Sketch)? _keyReleased = (s) {};
   late void Function(Sketch)? _keyTyped = (s) {};
+  late void Function(Sketch)? _mousePressed = (s) {};
+  late void Function(Sketch)? _mouseDragged = (s) {};
+  late void Function(Sketch)? _mouseReleased = (s) {};
+  late void Function(Sketch)? _mouseClicked = (s) {};
+  late void Function(Sketch)? _mouseMoved = (s) {};
+  late void Function(Sketch, double count)? _mouseWheel;
 
   bool _hasDoneSetup = false;
 
@@ -327,6 +365,54 @@ class Sketch {
 
   void keyTyped() {
     _keyTyped?.call(this);
+  }
+
+  void _onMousePressed() {
+    mousePressed();
+  }
+
+  void mousePressed() {
+    _mousePressed?.call(this);
+  }
+
+  void _onMouseReleased() {
+    mouseReleased();
+  }
+
+  void mouseReleased() {
+    _mouseReleased?.call(this);
+  }
+
+  void _onMouseDragged() {
+    mouseDragged();
+  }
+
+  void mouseDragged() {
+    _mouseDragged?.call(this);
+  }
+
+  void _onMouseClicked() {
+    mouseClicked();
+  }
+
+  void mouseClicked() {
+    _mouseClicked?.call(this);
+  }
+
+  void _onMouseMoved() {
+    mouseMoved();
+  }
+
+  void mouseMoved() {
+    _mouseMoved?.call(this);
+  }
+
+  void _onMouseWheel(double count) {
+    mouseWheel(count);
+  }
+
+  void mouseWheel(double count) {
+    _mouseWheel?.call(this, count);
   }
 
   late Canvas _canvas;
