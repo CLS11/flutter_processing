@@ -1,11 +1,14 @@
 // ignore_for_file: deprecated_member_use
 
 import 'dart:math';
+import 'dart:nativewrappers/_internal/vm/lib/ffi_allocation_patch.dart';
+import 'dart:ui';
 
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter/widgets.dart' hide Image;
 
 class Processing extends StatefulWidget {
   const Processing({
@@ -52,6 +55,8 @@ class _ProcessingState extends State<Processing>
   final GlobalKey _sketchCanvasKey = GlobalKey();
   late Ticker _ticker;
   late FocusNode _focusNode;
+  late ui.Image? _currentImage;
+  bool _isDrawing = false;
 
   @override
   void initState() {
@@ -94,14 +99,33 @@ class _ProcessingState extends State<Processing>
     super.dispose();
   }
 
-  void _onTick(dynamic elapsedTime) {
-    if (!mounted) return;
-    setState(
-      () {
-        widget.sketch.draw();
-        widget.sketch.elapsedTime = elapsedTime as Duration;
-      },
-    );
+  void _onTick(Duration elapsedTime) {
+    if (!_isDrawing) {
+      _doDrawFrame(elapsedTime);
+    }
+  }
+
+  Future<void> _doDrawFrame(Duration elapsedTime) async {
+    _isDrawing = true;
+
+    widget.sketch._updateElapsedTime(elapsedTime);
+
+    final recorder = PictureRecorder();
+    final canvas = Canvas(recorder);
+    widget.sketch
+      .._canvas = canvas
+      .._doSetup()
+      .._onDraw();
+
+    final picture = recorder.endRecording();
+    final width = widget.sketch._desiredWidth;
+    final height = widget.sketch._desiredHeight;
+    final image = await picture.toImage(width, height); //Bitmap
+
+    setState(() {
+      _isDrawing = false;
+      _currentImage = image;
+    });
   }
 
   void _noLoop() {
@@ -146,7 +170,7 @@ class _ProcessingState extends State<Processing>
   Offset _getCanvasOffsetFromWidgetOffset(Offset widgetOffset) {
     final myBox = context.findRenderObject();
     final canvasBox =
-        _sketchCanvasKey.currentContext!.findRenderObject() as RenderBox;
+        _sketchCanvasKey.currentContext!.findRenderObject()! as RenderBox;
     return canvasBox.globalToLocal(widgetOffset, ancestor: myBox);
   }
 
@@ -232,7 +256,14 @@ class _ProcessingState extends State<Processing>
         onPointerCancel: _onPointerCancel,
         onPointerSignal: _onPointerSignal,
         child: Center(
-          child: CustomPaint(
+          child: _currentImage != null
+              ? RawImage(
+                  image: _currentImage,
+                )
+              : SizedBox(
+                  key: _sketchCanvasKey,
+                ),
+          /*child: CustomPaint(
             key: _sketchCanvasKey,
             size: Size(
               widget.sketch._desiredWidth.toDouble(),
@@ -242,7 +273,7 @@ class _ProcessingState extends State<Processing>
               sketch: widget.sketch,
               clipBehavior: widget.clipBehavior,
             ),
-          ),
+          ),*/
         ),
       ),
     );
@@ -416,13 +447,14 @@ class Sketch {
   }
 
   late Canvas _canvas;
-  late Size _size;
+  late Size _size = Size(100, 100);
   late Paint _fillPaint;
   late Paint _strokePaint;
   late Color _backgroundColor = const Color(0xffc5c5c5c5c);
 
   int _desiredWidth = 100;
   int _desiredHeight = 100;
+  VoidCallback? _onSizeChanged;
 
   //***************STRUCTURE***************//
   bool _isLooping = true;
@@ -441,7 +473,8 @@ class Sketch {
 
   //***************ENVIRONMENT*************//
   Duration _elapsedTime = Duration.zero;
-  set elapsedTime(Duration newElapsedTime) => _elapsedTime = newElapsedTime;
+  void _updateElapsedTime(Duration newElapsedTime) =>
+      _elapsedTime = newElapsedTime;
 
   Duration? _lastDrawTime;
 
@@ -460,6 +493,9 @@ class Sketch {
   void size({required int width, required int height}) {
     _desiredWidth = width;
     _desiredHeight = height;
+    _size = Size(width.toDouble(), height.toDouble());
+    _onSizeChanged?.call();
+    background(color: _backgroundColor);
   }
 
   //***************RANDOM******************//
@@ -808,9 +844,11 @@ class _SketchPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     if (clipBehavior != Clip.none) {
-      canvas.clipRect(Offset.zero & size,
-          doAntiAlias: clipBehavior == Clip.antiAlias ||
-              clipBehavior == Clip.antiAliasWithSaveLayer);
+      canvas.clipRect(
+        Offset.zero & size,
+        doAntiAlias: clipBehavior == Clip.antiAlias ||
+            clipBehavior == Clip.antiAliasWithSaveLayer,
+      );
 
       //Save layer for antiAliasWithSaveLayer
     }
