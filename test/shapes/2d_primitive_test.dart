@@ -15,7 +15,7 @@ void main() {
           await tester.pumpWidget(
             Processing(
               sketch: Sketch.simple(
-                draw: (s) {
+                draw: (s) async {
                   s
                     ..noLoop()
                     ..circle(
@@ -39,7 +39,7 @@ void main() {
         await tester.pumpWidget(
           Processing(
             sketch: Sketch.simple(
-              draw: (s) {
+              draw: (s) async {
                 s
                   ..noLoop()
                   ..square(
@@ -59,7 +59,7 @@ void main() {
         await tester.pumpWidget(
           Processing(
             sketch: Sketch.simple(
-              draw: (s) {
+              draw: (s) async {
                 s
                   ..noLoop()
                   ..rect(
@@ -78,7 +78,7 @@ void main() {
         await tester.pumpWidget(
           Processing(
             sketch: Sketch.simple(
-              draw: (s) {
+              draw: (s) async {
                 s
                   ..noLoop()
                   ..rect(
@@ -98,7 +98,7 @@ void main() {
         await tester.pumpWidget(
           Processing(
             sketch: Sketch.simple(
-              draw: (s) {
+              draw: (s) async {
                 s
                   ..noLoop()
                   ..rect(
@@ -123,7 +123,7 @@ void main() {
         await tester.pumpWidget(
           Processing(
             sketch: Sketch.simple(
-              draw: (s) {
+              draw: (s) async {
                 s
                   ..noLoop()
                   ..triangle(
@@ -145,7 +145,7 @@ void main() {
         await tester.pumpWidget(
           Processing(
             sketch: Sketch.simple(
-              draw: (s) {
+              draw: (s) async {
                 s
                   ..noLoop()
                   ..quad(
@@ -167,7 +167,7 @@ void main() {
         await tester.pumpWidget(
           Processing(
             sketch: Sketch.simple(
-              draw: (s) {
+              draw: (s) async {
                 s
                   ..noLoop()
                   ..line(
@@ -187,7 +187,7 @@ void main() {
         await tester.pumpWidget(
           Processing(
             sketch: Sketch.simple(
-              draw: (s) {
+              draw: (s) async {
                 s
                   ..noLoop()
                   ..line(
@@ -217,7 +217,7 @@ void main() {
         await tester.pumpWidget(
           Processing(
             sketch: Sketch.simple(
-              draw: (s) {
+              draw: (s) async {
                 s
                   ..noLoop()
                   ..point(x: 30, y: 20)
@@ -237,7 +237,7 @@ void main() {
         await tester.pumpWidget(
           Processing(
             sketch: Sketch.simple(
-              draw: (s) {
+              draw: (s) async {
                 s
                   ..noLoop()
                   ..ellipse(
@@ -261,7 +261,7 @@ void main() {
         await tester.pumpWidget(
           Processing(
             sketch: Sketch.simple(
-              draw: (s) {
+              draw: (s) async {
                 s
                   ..noLoop()
                   ..fill(color: Color.fromARGB(255, 255, 255, 255))
@@ -294,7 +294,7 @@ void main() {
         await tester.pumpWidget(
           Processing(
             sketch: Sketch.simple(
-              draw: (s) {
+              draw: (s) async {
                 s
                   ..noLoop()
                   ..fill(color: Color.fromARGB(255, 255, 255, 255))
@@ -326,7 +326,7 @@ void main() {
         await tester.pumpWidget(
           Processing(
             sketch: Sketch.simple(
-              draw: (s) {
+              draw: (s) async {
                 s
                   ..noLoop()
                   ..arc(
@@ -379,7 +379,7 @@ void main() {
         await tester.pumpWidget(
           Processing(
             sketch: Sketch.simple(
-              draw: (s) {
+              draw: (s) async {
                 s
                   ..noLoop()
                   ..arc(
@@ -405,7 +405,7 @@ void main() {
         await tester.pumpWidget(
           Processing(
             sketch: Sketch.simple(
-              draw: (s) {
+              draw: (s) async {
                 s
                   ..noLoop()
                   ..arc(
@@ -431,7 +431,7 @@ void main() {
         await tester.pumpWidget(
           Processing(
             sketch: Sketch.simple(
-              draw: (s) {
+              draw: (s) async {
                 s
                   ..noLoop()
                   ..arc(
