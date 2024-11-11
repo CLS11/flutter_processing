@@ -1,7 +1,8 @@
-// ignore_for_file: deprecated_member_use
+// ignore_for_file: deprecated_member_use, unused_import
 
 import 'dart:math';
 import 'dart:nativewrappers/_internal/vm/lib/ffi_allocation_patch.dart';
+import 'dart:ui' as ui;
 import 'dart:ui';
 
 import 'package:flutter/gestures.dart';
