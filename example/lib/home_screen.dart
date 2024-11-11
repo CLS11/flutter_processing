@@ -1,6 +1,10 @@
-import 'package:example/star.dart';
+import 'dart:ui' as ui;
+import 'dart:typed_data';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart' as widgets;
+import 'package:flutter/services.dart';
 import 'package:flutter_processing/flutter_processing.dart';
+import 'package:example/star.dart';
 import 'package:example/droplet.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -11,6 +15,7 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  late ui.Image _loadedImage;
   //final _stars = <Star>[];
 
   final _droplets = <Droplet>[];
@@ -22,6 +27,11 @@ class _HomeScreenState extends State<HomeScreen> {
     _droplets.clear();
   }
 
+  Future<Uint8List?> getImageBytes(ui.Image image) async {
+    ByteData? byteData = await image.toByteData(format: ui.ImageByteFormat.png);
+    return byteData?.buffer.asUint8List();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -29,8 +39,10 @@ class _HomeScreenState extends State<HomeScreen> {
       body: Center(
         child: Processing(
           sketch: Sketch.simple(
-            setup: (s) {
+            setup: (s) async {
               s.size(width: 500, height: 500);
+              _loadedImage = await s.loadImage('assets/3.png');
+              setState(() {});
               /*final width = 640;
               final height = 360;
               s
@@ -48,12 +60,20 @@ class _HomeScreenState extends State<HomeScreen> {
                 );
               }*/
             },
-            draw: (s) {
+            draw: (s) async {
+              final bytes = await getImageBytes(_loadedImage);
+              if (bytes != null) {
+                final flutterImage = Image.memory(bytes);
+                s.image(
+                  image: flutterImage,
+                  origin: Offset(100, 200),
+                );
+              }
               /*for (final droplet in _droplets) {
                 droplet
                   ..fall(s)
                   ..show(s);
-              }*/
+              }
             },
             mouseMoved: (s) {
               // print(
@@ -81,7 +101,7 @@ class _HomeScreenState extends State<HomeScreen> {
               // );
             },
             mouseWheel: (s, count) {
-              print('mouseWheel - count: $count');
+              print('mouseWheel - count: $count');*/
             },
           ),
         ),
