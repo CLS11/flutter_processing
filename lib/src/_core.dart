@@ -113,10 +113,9 @@ class _ProcessingState extends State<Processing>
 
     final recorder = PictureRecorder();
     final canvas = Canvas(recorder);
-    widget.sketch
-      .._canvas = canvas
-      .._doSetup()
-      .._onDraw();
+    widget.sketch._canvas = canvas;
+    await widget.sketch._doSetup();
+    await widget.sketch._onDraw();
 
     final picture = recorder.endRecording();
     final width = widget.sketch._desiredWidth;
@@ -285,8 +284,8 @@ class Sketch {
   Sketch();
 
   Sketch.simple({
-    void Function(Sketch)? setup,
-    void Function(Sketch)? draw,
+    Future<void> Function(Sketch)? setup,
+    Future<void> Function(Sketch)? draw,
     void Function(Sketch)? keyPressed,
     void Function(Sketch)? keyReleased,
     void Function(Sketch)? keyTyped,
@@ -308,8 +307,8 @@ class Sketch {
         _mouseMoved = mouseMoved,
         _mouseWheel = mouseWheel;
 
-  late void Function(Sketch)? _setup = (s) {};
-  late void Function(Sketch)? _draw = (s) {};
+  Future<void> Function(Sketch)? _setup;
+  Future<void> Function(Sketch)? _draw;
   late void Function(Sketch)? _keyPressed = (s) {};
   late void Function(Sketch)? _keyReleased = (s) {};
   late void Function(Sketch)? _keyTyped = (s) {};
@@ -322,7 +321,7 @@ class Sketch {
 
   bool _hasDoneSetup = false;
 
-  void _doSetup() {
+  Future<void> _doSetup() async {
     if (_hasDoneSetup) {
       return;
     }
@@ -340,14 +339,14 @@ class Sketch {
       ..color = const Color(0xFF000000)
       ..style = PaintingStyle.stroke
       ..strokeWidth = 1;
-    setup();
+    await setup();
   }
 
-  void setup() {
-    _setup?.call(this);
+  Future<void> setup() async {
+    await _setup?.call(this);
   }
 
-  void _onDraw() {
+  Future<void> _onDraw() async {
     background(color: _backgroundColor);
 
     draw();
@@ -367,8 +366,8 @@ class Sketch {
         : _actualFrameRate;
   }
 
-  void draw() {
-    _draw?.call(this);
+  Future<void> draw() async {
+    await _draw?.call(this);
   }
 
   void _onKeyPressed(LogicalKeyboardKey key) {
@@ -546,6 +545,26 @@ class Sketch {
 
   void noStroke() {
     _strokePaint.color = const Color(0x00000000);
+  }
+
+  //***************IMAGE/LOADING & DISPLAYING**********//
+
+  Future<ui.Image> loadImage(String filepath) async {
+    final ByteData imageData = await rootBundle.load(filepath);
+    final Uint8List uint8list = imageData.buffer.asUint8List();
+
+    final codec = await ui.instantiateImageCodec(uint8list);
+    final frame = await codec.getNextFrame();
+
+    return frame.image;
+  }
+
+  void image({
+    required Image image,
+    Offset origin = Offset.zero,
+    Size? displaySize,
+  }) {
+    _canvas.drawImage(image as ui.Image, origin, Paint());
   }
 
   //***************SHAPE/2D PRIMITIVES**************//
