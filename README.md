@@ -1,16 +1,23 @@
-# flutter_processing
+#  Flutter Processing
 
-A new Flutter project.
+A creative playground built with **Flutter + Processing**-style graphics for generative art, animations, and visual experiments. Inspired by the [Processing](https://processing.org/) framework, this project explores how Flutter can be used for dynamic, artistic coding.
 
-## Getting Started
+---
 
-This project is a starting point for a Flutter application.
+##  Features
 
-A few resources to get you started if this is your first Flutter project:
+-  Generative art patterns using Flutter's Canvas  
+-  Frame-by-frame animations (similar to draw() in Processing)  
+-  Mathematically driven visual effects  
+-  Great for experimentation and learning graphics programming
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+---
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## 🛠 Tech Stack
+
+- **Flutter**  
+- **Dart**  
+- CustomPainter  
+- Canvas and Paint  
+- Mathematical expressions for animation
+
